@@ -8,6 +8,7 @@ import Rejected from './src/containers/Employee/rejected';
 import Sattled from './src/containers/Employee/sattled';
 import TokenExpireWaring from './src/containers/Common/tokenExpireWarning.js';
 import Loading from './src/containers/Common/loading';
+import AbiMethods from './src/containers/abi/AbiMethods';
 
 
 var JWT = require('jsonwebtoken');
@@ -49,6 +50,7 @@ export default class ProjectRouter extends React.Component {
 						<Route path="/sattled" component={Sattled} />
 						<Route path="/rejected" component={Rejected} />
 						<Route path="/approved" component={Approved} />
+						<Route path="/abi" component={AbiMethods} />
 
 
 
