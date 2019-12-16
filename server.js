@@ -7,11 +7,13 @@ const cookieParser = require('cookie-parser');
 const ejs = require('ejs');
 const flash    = require('connect-flash');
 var session = require('express-session');
+var cors = require('cors')
 
 var dotenv = require('dotenv').config({path: __dirname + '/.env'});
 
 // Set up the express app
 const app = express();
+app.use(cors());
 global.config = require('./configuration');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
