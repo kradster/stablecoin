@@ -100,6 +100,7 @@
     "url": "^0.11.0",
     "url-loader": "^1.0.1",
     "web3": "^1.2.4",
+    "web3-net": "^1.2.4",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^2.11.1"
   },

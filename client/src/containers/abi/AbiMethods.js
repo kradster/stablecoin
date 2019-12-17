@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import {abi} from '../Common/abi';
 import Web3 from 'web3';
 const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
-var bigNumber = require('bignumber.js');
-var Tx = require('ethereumjs-tx');
 
 export class AbiMethods extends Component {
 
@@ -29,14 +27,29 @@ export class AbiMethods extends Component {
         this.initAccount();
         
     }
-    initAccount = async()=>{
-        this.accounts = await this.web3.eth.getAccounts();
+    initAccount = ()=>{
+        if (window.ethereum) {
+            try{
+                window.ethereum.enable().then((a)=>{
+                    this.account = a[0];
+                  console.log('LATEST ',a);
+                });
+            }catch(e) {
+                // User has denied account access to DApp... 
+                console.log('ERROR ',e);
+            }
+        }     
+        else if (window.web3){ 
+                 console.log('NO METAMASK FOUND')
+
+        } 
     }
 
     componentDidMount(){
         let name = abi.map((e)=>{return e.name;});
-        this.setState({methodNames:name});
+        console.log(name);
         
+        this.setState({methodNames:name});
     }  
 
     renderMethodName(){
@@ -53,53 +66,29 @@ export class AbiMethods extends Component {
     }
 
     transection = async () => {
-        // this.param = [];
-        if(this.param.length>this.state.paramLength){
-            this.param.pop();
-        }
-        let a = this.state.paramLength>1
-        ?   Object.keys(this.param).map(e=>{return this.param[e];})
-        :   this.state.paramLength<1
-        ?   null
-        :   this.param[0];
-        
-        console.log(this.param);
-        
-        
-        
-        
-       
-       
-       
         try {
-            // ***************************************** Contract Call
             let n = this.state.selectedMethodName;
             let decimals = null;
-            if(this.state.paramLength>1){
+            let parameter = this.state.param.slice(0,this.state.paramLength);
+            var result = web3.eth.sign(web3.utils.sha3(parameter.toString()),this.account).then(d=>{
+                console.log('results2',d);
+                this.setState({res:d});
+                web3.eth.sendTransaction({
+                    from: this.account,
+                    data: d // deploying a contracrt
+                },(error,hash)=>{
+                    console.log('After send transection',hash);
+                    this.setState({res:hash});
+                    if (error){
+                        console.log('error send transection',e);
+                        this.setState({res:e});
+                    }
+                })
                 
-               
-                decimals = await this.contract.methods[n](...a).send({from: this.accounts[0]})
-                ;
-            }
-            if(this.state.paramLength===1){
-                
-               
-                decimals = await this.contract.methods[n](a).send({from: this.accounts[0]});
-              
+            }) 
 
-            }
-            if(this.state.paramLength===0){
-                
-                
-                decimals = await this.contract.methods[n]().send({from: this.accounts[0]});
-               
-
-
-            }
-            // ***************************************** Contract Call
-            
-            this.setState({res:decimals,param:[]});
-           
+            // decimals = await this.contract.methods[n](...parameter).call();
+            // this.setState({res:decimals});
         }
         catch (err) {
             this.setState({res:err});
@@ -109,16 +98,20 @@ export class AbiMethods extends Component {
 
     setParam = (e)=>{
         this.param[e.target.name] = e.target.value;
+        // let arr = this.param.slice(0,this.state.paramLength);
         this.setState({'param':this.param});
+        // console.log('PARAMS',arr);
     }
 
     renderInputFields(){
         let {constant,inputs,name,outputs,payable,stateMutability,type} = this.state.methodfieldObject;
+        let inputFields = inputs.map((i,index)=>(<input className="myinput" onChange={(e)=>this.setParam(e)} name={index} placeholder={i.name+" "+i.type}/>))
         return (
             <div style={{marginLeft:"50px"}}>
             <label>Name of function : {name}</label>
-            {inputs.map((i,index)=>( <div style={{margin:"10px"}}><input onChange={(e)=>this.setParam(e)} name={index} placeholder={i.name+" "+i.type}/></div>))}
+            <div className="inputFieldBox">{inputFields}
             <button onClick={()=>this.transection()} >make transection</button>
+            </div>
             </div>
         )
     }
@@ -126,22 +119,28 @@ export class AbiMethods extends Component {
     render() {
         
         return (
-            <div>
-                <h1>Your Methods</h1>
-                <div style={{display:"flex"}}>
-                    <div>
-                        <select onChange={(e)=>this.showMethodInput(e)}>
-                            <option disabled>Choose Method</option>
+            <div className="mygrid">
+                <div className="grid-item">
+                    <div className="selectBox">
+                    <label>Choose Function</label>
+                    <select onChange={(e)=>this.showMethodInput(e)}>
+                            <option selected disabled>Choose Method</option>
                             {this.renderMethodName()}
                         </select>
                     </div>
-                    <div>
-                        {!!this.state.methodfieldObject&&this.renderInputFields()}
-                        <div style={{margin:"20px"}}>
+                    </div>
+                    <div className="grid-item">
+                    <div className="inputBox">
+                    {!!this.state.methodfieldObject&&this.renderInputFields()}
+                    </div>
+                    <div className="output">
+                        
+                        <div>
                         {this.state.res.toString()}
                         </div>
                     </div>
                 </div>
+                
             </div>
         )
     }
