@@ -40,6 +40,7 @@
     "date-diff": "^0.2.0",
     "dotenv": "^8.1.0",
     "ejs": "^2.5.7",
+    "ethereumjs-tx": "^2.1.1",
     "express": "^4.16.2",
     "express-fileupload": "^0.3.0",
     "express-session": "^1.15.6",

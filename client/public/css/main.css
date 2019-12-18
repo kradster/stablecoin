@@ -2252,57 +2252,115 @@ input:focus {
 /* dkfndkfgnfjnfkjhgk */
 .mygrid {
   display: grid;
-  grid-template-columns: 200px auto;
+  grid-template-columns:200px  auto;
   height: 100vh;
   box-sizing: border-box;
+  grid-gap:20px;
 }
 
 .grid-item {
   border-left: 1px solid #ccc;
 }
 
+.grid-item:first-child{
+  padding-left:10px;
+}
+
 .grid-item:last-child{
   display: grid;
-  grid-template-rows:100px auto;
+  grid-template-rows: auto;
 }
 
 .selectBox{
-  background-color: #eee;
-  height:100%;
-  padding:10px;
+ margin-top:20px;
+ margin-bottom:20px;
 }
+
 .selectBox select{
+  border-radius:3px;
+  outline: none;
+  background-color: white;
   width:100%;
+  height:30px;
+}
+
+.selectBox select:hover{
+  background-color: #eeeeee;
+}
+
+.selectBox select option{
+  border:none;
+  outline: none;
+  background-color: white;
 }
 
 .inputBox{
-  border-bottom: 1px solid #ccc;
   padding:10px;
-  background-color:#eee;
 }
 
 .inputFieldBox{
   display: flex;
+  flex-direction: column;
 }
-.inputFieldBox input{
-  margin-right: 10px;
+.inputFieldBox > *{
+  margin-top: 10px;
 }
 
 .inputFieldBox button{
   border:0px;
   outline:0px;
-  background-image: linear-gradient(45deg,dodgerblue,rgb(47, 45, 143));
-  color:white;
+  background:rgba(74, 156, 238, 0.781);
+  box-shadow:0px 0px 0px 2px rgb(47, 45, 143) ;
+  color:rgb(47, 45, 143);
   border-radius:5px;
   cursor: pointer;
-  height:30px;
+  height:40px;
+  font-size:0.8rem;
+  font-weight: bold;
+  text-transform: capitalize;
+  transition: all .3s linear;
 
 }
-.inputFieldBox button:active{
-  background-image: linear-gradient(95deg,dodgerblue,rgb(26, 25, 129));
+.inputFieldBox button:hover,
+  .inputFieldBox button:active{
+  background:linear-gradient(95deg,dodgerblue,rgb(26, 25, 129));
+  color:white;
+  box-shadow:0px 0px 0px 2px transparent;
 }
 
 
 .output{
-  padding:20px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
+  padding:10px;
+}
+
+
+.output.error{
+  background-color: rgba(255, 0, 0, 0.253);
+  color: rgb(240, 44, 44);
+}
+
+.output.success{
+  background-color: rgba(0, 255, 128, 0.329);
+  color:green;
+}
+
+.txRadioBox{
+  margin-top:30px;
+  margin-bottom:30px;
+}
+.txRadioBox label{
+  font-size:0.8rem !important;
+  text-transform: capitalize;
+  color: #002ebc;
+}
+
+label input{
+  float: left;
+}
+
+input.myinput.error-input{
+  box-shadow:0px 0px 0px 1px red !important; 
 }

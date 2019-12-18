@@ -14,12 +14,20 @@ export class AbiMethods extends Component {
             methodfieldObject:undefined,
             param:[],
             paramLength:0,
-            res:''
+            success:false,
+            res:'',
+            txType:0
         };
 
         this.web3 = web3;
-        this.transection = this.transection.bind(this);
+        this.setParameter = this.setParameter.bind(this);
         this.setParam = this.setParam.bind(this);
+        this.getRawTransection = this.getRawTransection.bind(this);
+        this.getSignTransection = this.getSignTransection.bind(this);
+        this.signAndBroadCast = this.signAndBroadCast.bind(this);
+        this.doOperation = this.doOperation.bind(this);
+
+
         this.param = [];
         this.address = '0x02009a21Df9b9647aA6f02f72830318fADF1D281';
         this.abi = require('./abi.json');
@@ -60,40 +68,97 @@ export class AbiMethods extends Component {
     }
 
    showMethodInput(e){
+       this.element = [];
         let obj = abi.filter((o)=>{ return o.name===e.target.value})[0];
+        this.constant = obj.constant;
         this.setState({'paramLength':obj.inputs.length});
         this.setState({selectedMethodName:e.target.value,methodfieldObject:obj});
+
+        setTimeout(()=>{
+            for (let index = 0; index < obj.inputs.length; index++) {
+                this.element.push(document.querySelector(`input[name='${index}']`));
+            }
+            console.log("this . element ===>",this.element)
+        },100)
+
+
     }
 
-    transection = async () => {
-        try {
-            let n = this.state.selectedMethodName;
-            let decimals = null;
-            let parameter = this.state.param.slice(0,this.state.paramLength);
-            var result = web3.eth.sign(web3.utils.sha3(parameter.toString()),this.account).then(d=>{
-                console.log('results2',d);
-                this.setState({res:d});
-                web3.eth.sendTransaction({
-                    from: this.account,
-                    data: d // deploying a contracrt
-                },(error,hash)=>{
-                    console.log('After send transection',hash);
-                    this.setState({res:hash});
-                    if (error){
-                        console.log('error send transection',e);
-                        this.setState({res:e});
-                    }
-                })
-                
-            }) 
+    getRawTransection = async ()=>{
+        this.setParameter();
+        try{
+            let contractData = await this.contract.methods[this.state.selectedMethodName](...this.parameter).encodeABI()
+            console.log('contractData',contractData);
+            var gas = await web3.eth.estimateGas({
+                to: this.address, 
+                data: contractData,
+             });
+             this.nonce  = "no";
+             this.gasPrice = "no";
+            await web3.eth.getTransactionCount(this.account).then(nonce=>{
+                this.nonce = nonce;
+                this.setState({res:nonce,success:true,outputClass:'success'});
+                console.log('NONCE',this.nonce);
+             }).catch(e=>{
+                this.setState({res:e,success:false,outputClass:'error'});
+             });
 
+             await web3.eth.getGasPrice().then(gasPrice=>{
+                this.gasPrice = gasPrice;
+                this.setState({res:gasPrice,success:true,outputClass:'success'});
+                console.log('GAS_PRICE',this.gasPrice);
+             })
+            
+            let rawTx = {
+                gasLimit:gas,
+                data: contractData,
+                from: this.account,
+                to: this.address,
+                nonce :this.nonce,
+                gasPrice : this.gasPrice
+            };
+
+            this.setState({res:JSON.stringify(rawTx),success:true,outputClass:'success'});
+        }catch(e){
+            let o = typeof e==='object'?JSON.stringify(e):e;
+            this.setState({res:o,success:false,outputClass:'error'});
+        };
+    }
+
+    getSignTransection = async ()=>{
+        this.setParameter();
+        try{
+            await web3.eth.sign(this.tr,this.account).then(d=>{
+                console.log('results2',d);
+                let o = typeof e==='object'?JSON.stringify(d):d;
+                this.setState({res:o,success:true,outputClass:'success'});
+            }) 
+        }catch(e){
+            let o = typeof e==='object'?JSON.stringify(e):e;
+            this.setState({res:o,success:false,outputClass:'error'});
+        }
+    }
+
+    signAndBroadCast = async ()=>{
+        this.setParameter();
+        try{
+        let d  = ""; 
+        if( this.constant){d  = await this.contract.methods[this.state.selectedMethodName](...this.parameter).call();}
+        else{d  = await this.contract.methods[this.state.selectedMethodName](...this.parameter).send({from:this.account});}
+        let o = typeof e==='object'?JSON.stringify(d):d;
+        this.setState({res:o,success:true,outputClass:'success'});
+    }catch(e){
+        let o = typeof e==='object'?JSON.stringify(e):e;
+        this.setState({res:o,success:false,outputClass:'error'});
+    }
+    }
+
+    setParameter = () => {
+        this.parameter = this.state.paramLength>0?this.state.param.slice(0,this.state.paramLength):'';
+        this.tr = web3.utils.sha3(this.parameter.toString());
             // decimals = await this.contract.methods[n](...parameter).call();
             // this.setState({res:decimals});
-        }
-        catch (err) {
-            this.setState({res:err});
-            return 0
-        }
+       
     }
 
     setParam = (e)=>{
@@ -103,40 +168,89 @@ export class AbiMethods extends Component {
         // console.log('PARAMS',arr);
     }
 
-    renderInputFields(){
-        let {constant,inputs,name,outputs,payable,stateMutability,type} = this.state.methodfieldObject;
-        let inputFields = inputs.map((i,index)=>(<input className="myinput" onChange={(e)=>this.setParam(e)} name={index} placeholder={i.name+" "+i.type}/>))
+    renderRadioBox(){
         return (
-            <div style={{marginLeft:"50px"}}>
-            <label>Name of function : {name}</label>
-            <div className="inputFieldBox">{inputFields}
-            <button onClick={()=>this.transection()} >make transection</button>
+            <div className="txRadioBox">
+            <label>
+            <input type="radio" name="txType" onChange={()=>this.setState({txType:1})}/> 
+            raw transaction
+            </label>
+            <label>
+            <input type="radio" name="txType" onChange={()=>this.setState({txType:2})}/>
+            sign transaction
+            </label>
+            <label>
+            <input type="radio" name="txType" onChange={()=>this.setState({txType:3})}/>
+            broadcast transaction
+            </label>
+            </div>
+        )
+    }
+
+    doOperation = ()=>{
+        this.setState({res:'Performing '+this.state.selectedMethodName+"".toUpperCase()});
+        this.element.forEach(input=>{
+            console.log("input=====>",typeof input.value , input.value)
+            if(input.value===""){
+                input.classList.add('error-input')
+
+            }else{
+                input.classList.remove('error-input')
+            }
+        })
+
+        switch(this.state.txType){
+            case 1: this.getRawTransection(); break;
+            case 2: this.getSignTransection(); break;
+            case 3: this.signAndBroadCast(); break;
+            default : this.setState({'error':'Choose Transection type'})
+        }
+        if(!this.state.txType>0){
+            this.setState({res:'Choose Transection type',success:false,outputClass:'error'});
+        }
+
+
+
+    }
+
+    renderInputFields(){
+        let {inputs,name} = this.state.methodfieldObject;
+        let inputFileds = inputs.map((i,index)=>(<input className="myinput" onChange={(e)=>this.setParam(e)} name={index} placeholder={i.name+" "+i.type}/>))
+        return (
+            <div>
+            <label>Name of function</label>
+            <label>{name}</label>
+            <div className="inputFieldBox">
+            { inputFileds }
+            {this.renderRadioBox()}
+            <button onClick={()=>this.doOperation()} >{name}</button>
             </div>
             </div>
         )
     }
 
     render() {
-        
+        console.log(this.state)
         return (
             <div className="mygrid">
                 <div className="grid-item">
-                    <div className="selectBox">
-                    <label>Choose Function</label>
-                    <select onChange={(e)=>this.showMethodInput(e)}>
-                            <option selected disabled>Choose Method</option>
+                <div className="selectBox">
+                <label>Choose function</label>
+                        <select onChange={(e)=>this.showMethodInput(e)}>
+                            <option selected disabled>Choose function</option>
                             {this.renderMethodName()}
                         </select>
-                    </div>
-                    </div>
+                </div>
+                <div className="inputBox">
+                        {!!this.state.methodfieldObject && this.renderInputFields()}
+                </div>
+                </div>
                     <div className="grid-item">
-                    <div className="inputBox">
-                    {!!this.state.methodfieldObject&&this.renderInputFields()}
-                    </div>
-                    <div className="output">
+                   
+                    <div className={`output ${this.state.outputClass} `}>
                         
                         <div>
-                        {this.state.res.toString()}
+                        {this.state.res}
                         </div>
                     </div>
                 </div>
