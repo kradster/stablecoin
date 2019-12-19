@@ -2355,6 +2355,7 @@ input:focus {
   font-size:0.8rem !important;
   text-transform: capitalize;
   color: #002ebc;
+  cursor: pointer;
 }
 
 label input{
@@ -2364,3 +2365,8 @@ label input{
 input.myinput.error-input{
   box-shadow:0px 0px 0px 1px red !important; 
 }
+
+.myinput-label{
+  font-size:0.8rem !important;
+}
+

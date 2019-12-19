@@ -26,8 +26,6 @@ export class AbiMethods extends Component {
         this.getSignTransection = this.getSignTransection.bind(this);
         this.signAndBroadCast = this.signAndBroadCast.bind(this);
         this.doOperation = this.doOperation.bind(this);
-
-
         this.param = [];
         this.address = '0x02009a21Df9b9647aA6f02f72830318fADF1D281';
         this.abi = require('./abi.json');
@@ -162,6 +160,7 @@ export class AbiMethods extends Component {
     }
 
     setParam = (e)=>{
+        event.target.classList.remove('error-input');
         this.param[e.target.name] = e.target.value;
         // let arr = this.param.slice(0,this.state.paramLength);
         this.setState({'param':this.param});
@@ -189,25 +188,42 @@ export class AbiMethods extends Component {
 
     doOperation = ()=>{
         this.setState({res:'Performing '+this.state.selectedMethodName+"".toUpperCase()});
-        this.element.forEach(input=>{
-            console.log("input=====>",typeof input.value , input.value)
-            if(input.value===""){
-                input.classList.add('error-input')
-
-            }else{
-                input.classList.remove('error-input')
-            }
-        })
-
-        switch(this.state.txType){
-            case 1: this.getRawTransection(); break;
-            case 2: this.getSignTransection(); break;
-            case 3: this.signAndBroadCast(); break;
-            default : this.setState({'error':'Choose Transection type'})
-        }
-        if(!this.state.txType>0){
+        if(!this.constant){
+            this.element.forEach(input=>{
+                console.log("input=====>",typeof input.value , input.value)
+                if(input.value===""){
+                    input.classList.add('error-input')
+                    this.isValid = false;
+                    this.setState({res:'Enter required parameters !!',success:false,outputClass:'error'});
+                }else{
+                    this.isValid = true;
+                    input.classList.remove('error-input')
+                }
+            })
+            
+            if(!this.state.txType>0){
             this.setState({res:'Choose Transection type',success:false,outputClass:'error'});
+            }
+            else if(!this.isValid){
+            this.setState({res:'Enter required parameters !!',success:false,outputClass:'error'});
+            }else{
+                switch(this.state.txType){
+                    case 1: this.getRawTransection(); break;
+                    case 2: this.getSignTransection(); break;
+                    case 3: this.signAndBroadCast(); break;
+                    default : this.setState({'error':'Choose Transection type'})
+                }
+            }
+
+            
+
+
+
+        }else{
+            this.signAndBroadCast();
         }
+
+        
 
 
 
@@ -215,14 +231,18 @@ export class AbiMethods extends Component {
 
     renderInputFields(){
         let {inputs,name} = this.state.methodfieldObject;
-        let inputFileds = inputs.map((i,index)=>(<input className="myinput" onChange={(e)=>this.setParam(e)} name={index} placeholder={i.name+" "+i.type}/>))
+        let inputFileds = inputs.map((i,index)=>(
+            <div>
+                 <label className="myinput-label">Enter {i.name.replace("_","")}</label>
+                <input className="myinput" onChange={(e)=>this.setParam(e)} name={index}/>
+            </div>))
         return (
             <div>
-            <label>Name of function</label>
-            <label>{name}</label>
-            <div className="inputFieldBox">
-            { inputFileds }
-            {this.renderRadioBox()}
+            <label className="fsz07rem">Name of function</label>
+            <div className="functionName">{name.toUpperCase()}</div>
+            <div className="inputFieldBox mrgt20px">
+            {!this.constant && inputFileds }
+            {!this.constant && this.renderRadioBox()}
             <button onClick={()=>this.doOperation()} >{name}</button>
             </div>
             </div>
