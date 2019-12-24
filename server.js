@@ -38,6 +38,6 @@ app.get('*', function (req, res){
    res.sendFile('index.html', { root: path.join(__dirname, './client/public/html') });
 })
 
-console.log("env ===",process.env.port)
-app.listen(process.env.port,()=>{console.log("Server is up and listen on port ",process.env.port)})
+
+app.listen(3000,()=>{console.log("Server is up and listen on port ",3000)})
 module.exports = app;

@@ -2252,7 +2252,7 @@ input:focus {
 /* dkfndkfgnfjnfkjhgk */
 .mygrid {
   display: grid;
-  grid-template-columns:200px  auto;
+  grid-template-columns:300px  auto;
   height: 100vh;
   box-sizing: border-box;
   grid-gap:20px;
@@ -2268,7 +2268,7 @@ input:focus {
 
 .grid-item:last-child{
   display: grid;
-  grid-template-rows: auto;
+  grid-template-rows:70px auto;
 }
 
 .selectBox{
@@ -2368,5 +2368,15 @@ input.myinput.error-input{
 
 .myinput-label{
   font-size:0.8rem !important;
+}
+
+.mynavbar{
+  width:100%;
+  background-color: #335a94;
+  overflow: hidden;
+}
+
+.mynavbar img{
+  margin-top:-60px;
 }
 

@@ -265,14 +265,18 @@ export class AbiMethods extends Component {
                         {!!this.state.methodfieldObject && this.renderInputFields()}
                 </div>
                 </div>
+               
                     <div className="grid-item">
-                   
+                    <div className="mynavbar">
+                    <img src="/public/img/dcex.png"/>
+                    </div>
                     <div className={`output ${this.state.outputClass} `}>
                         
                         <div>
                         {this.state.res}
                         </div>
                     </div>
+                   
                 </div>
                 
             </div>

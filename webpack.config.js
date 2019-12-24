@@ -20,7 +20,7 @@ var config = {
    		historyApiFallback: true
    	},
    module: {
-      loaders: [
+      rules: [
          {
             test: /\.jsx?$/,
             exclude: /node_modules/,
