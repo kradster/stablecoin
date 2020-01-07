@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {abi} from '../Common/abi';
+import {desc} from '../Common/desc';
 import Web3 from 'web3';
+import Notification from '../Common/Notification';
 const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
 export class AbiMethods extends Component {
@@ -15,8 +17,13 @@ export class AbiMethods extends Component {
             param:[],
             paramLength:0,
             success:false,
+            isError:false,
             res:'',
-            txType:0
+            txType:0,
+            errorMsg:'',
+            showConfig:false,
+            config_nonce:"",
+            config_gasPrice:""
         };
 
         this.web3 = web3;
@@ -31,6 +38,7 @@ export class AbiMethods extends Component {
         this.abi = require('./abi.json');
         this.contract = new this.web3.eth.Contract(this.abi,this.address);
         this.initAccount();
+        this.renderConfigInput = this.renderConfigInput.bind(this)
         
     }
     initAccount = ()=>{
@@ -87,23 +95,38 @@ export class AbiMethods extends Component {
         try{
             let contractData = await this.contract.methods[this.state.selectedMethodName](...this.parameter).encodeABI()
             console.log('contractData',contractData);
-            var gas = await web3.eth.estimateGas({
-                to: this.address, 
-                data: contractData,
-             });
+            var gas = 500000;
+               
              this.nonce  = "no";
              this.gasPrice = "no";
-            await web3.eth.getTransactionCount(this.account).then(nonce=>{
-                this.nonce = nonce;
-                this.setState({res:nonce,success:true,outputClass:'success'});
-                console.log('NONCE',this.nonce);
-             }).catch(e=>{
-                this.setState({res:e,success:false,outputClass:'error'});
-             });
+
+             if(this.state.config_nonce!==""){
+                this.nonce = this.state.config_nonce;
+             }else{
+                await web3.eth.getTransactionCount(this.account).then(nonce=>{
+                    this.nonce = nonce;
+                 }).catch(e=>{
+                    let o = typeof e==='object'?JSON.stringify(e):e;
+                    this.setState({errorMsg:o,isError:true,outputClass:'error'});
+                 });
+             }
+
+             if(this.state.config_gasPrice!==""){
+                this.nonce = this.state.config_gasPrice;
+             }else{
+                await web3.eth.getGasPrice().then(gasPrice=>{
+                    this.gasPrice = gasPrice;
+                 }).catch(e=>{
+                    let o = typeof e==='object'?JSON.stringify(e):e;
+                    this.setState({errorMsg:o,isError:true,outputClass:'error'});
+                 });
+             }
+
+            
 
              await web3.eth.getGasPrice().then(gasPrice=>{
                 this.gasPrice = gasPrice;
-                this.setState({res:gasPrice,success:true,outputClass:'success'});
+                // this.setState({res:gasPrice,success:true,outputClass:'success'});
                 console.log('GAS_PRICE',this.gasPrice);
              })
             
@@ -119,7 +142,7 @@ export class AbiMethods extends Component {
             this.setState({res:JSON.stringify(rawTx),success:true,outputClass:'success'});
         }catch(e){
             let o = typeof e==='object'?JSON.stringify(e):e;
-            this.setState({res:o,success:false,outputClass:'error'});
+            this.setState({errorMsg:o,isError:true,outputClass:'error'});
         };
     }
 
@@ -128,12 +151,12 @@ export class AbiMethods extends Component {
         try{
             await web3.eth.sign(this.tr,this.account).then(d=>{
                 console.log('results2',d);
-                let o = typeof e==='object'?JSON.stringify(d):d;
+                let o = d;
                 this.setState({res:o,success:true,outputClass:'success'});
             }) 
         }catch(e){
             let o = typeof e==='object'?JSON.stringify(e):e;
-            this.setState({res:o,success:false,outputClass:'error'});
+            this.setState({errorMsg:o,isError:true,outputClass:'error'});
         }
     }
 
@@ -143,11 +166,11 @@ export class AbiMethods extends Component {
         let d  = ""; 
         if( this.constant){d  = await this.contract.methods[this.state.selectedMethodName](...this.parameter).call();}
         else{d  = await this.contract.methods[this.state.selectedMethodName](...this.parameter).send({from:this.account});}
-        let o = typeof e==='object'?JSON.stringify(d):d;
+        let o = d;
         this.setState({res:o,success:true,outputClass:'success'});
     }catch(e){
         let o = typeof e==='object'?JSON.stringify(e):e;
-        this.setState({res:o,success:false,outputClass:'error'});
+        this.setState({errorMsg:o,isError:true,outputClass:'error'});
     }
     }
 
@@ -163,7 +186,8 @@ export class AbiMethods extends Component {
         event.target.classList.remove('error-input');
         this.param[e.target.name] = e.target.value;
         // let arr = this.param.slice(0,this.state.paramLength);
-        this.setState({'param':this.param});
+        this.setState({'param':this.param,errorMsg:'',});
+
         // console.log('PARAMS',arr);
     }
 
@@ -189,24 +213,30 @@ export class AbiMethods extends Component {
     doOperation = ()=>{
         this.setState({res:'Performing '+this.state.selectedMethodName+"".toUpperCase()});
         if(!this.constant){
-            this.element.forEach(input=>{
-                console.log("input=====>",typeof input.value , input.value)
-                if(input.value===""){
-                    input.classList.add('error-input')
-                    this.isValid = false;
-                    this.setState({res:'Enter required parameters !!',success:false,outputClass:'error'});
-                }else{
-                    this.isValid = true;
-                    input.classList.remove('error-input')
-                }
-            })
+
+            if(this.element.length>0){
+                this.element.forEach(input=>{
+                    console.log("input=====>",typeof input.value , input.value)
+                    if(input.value===""){
+                        input.classList.add('error-input')
+                        this.isValid = false;
+                        this.setState({errorMsg:'Enter required parameters !!',isError:true,outputClass:'error'});
+                    }else{
+                        this.isValid = true;
+                        input.classList.remove('error-input')
+                    }
+                })
+            }else{
+                this.isValid = true; 
+            }
             
             if(!this.state.txType>0){
-            this.setState({res:'Choose Transection type',success:false,outputClass:'error'});
+            this.setState({errorMsg:'Choose Transection type',isError:true,outputClass:'error'});
             }
-            else if(!this.isValid){
-            this.setState({res:'Enter required parameters !!',success:false,outputClass:'error'});
-            }else{
+            if(!this.isValid){
+            this.setState({errorMsg:'Enter required parameters !!',isError:true,outputClass:'error'});
+            }
+            if(this.state.txType>0 && this.isValid){
                 switch(this.state.txType){
                     case 1: this.getRawTransection(); break;
                     case 2: this.getSignTransection(); break;
@@ -214,6 +244,9 @@ export class AbiMethods extends Component {
                     default : this.setState({'error':'Choose Transection type'})
                 }
             }
+
+
+        
 
             
 
@@ -223,14 +256,19 @@ export class AbiMethods extends Component {
             this.signAndBroadCast();
         }
 
-        
 
+    }
 
-
+    closeNotification = ()=>{
+        this.setState({errorMsg:'',});
     }
 
     renderInputFields(){
         let {inputs,name} = this.state.methodfieldObject;
+        let description = desc.filter((d,k)=>{return Object.keys(d)[0].toLowerCase()=== name.toLowerCase()});
+        let key  = Object.keys(description[0]);
+        let value = description[0][key]
+        console.log('description',description);
         let inputFileds = inputs.map((i,index)=>(
             <div>
                  <label className="myinput-label">Enter {i.name.replace("_","")}</label>
@@ -239,9 +277,16 @@ export class AbiMethods extends Component {
         return (
             <div>
             <label className="fsz07rem">Name of function</label>
-            <div className="functionName">{name.toUpperCase()}</div>
-            <div className="inputFieldBox mrgt20px">
-            {!this.constant && inputFileds }
+            <div className="functionName">{name.toUpperCase()} <span data-desc={value} className="help"><i class="fa fa-question" aria-hidden="true"></i></span> </div>
+            <div className="inputFieldBox ">
+            <div className="">
+                    <label htmlFor="configInputs">
+                    <span className="fsz07rem"> SHOW CONFIG</span>
+                    <input id="configInputs" type="checkbox" onChange={()=>this.setState({showConfig:!this.state.showConfig})}/>
+                    </label>
+                    {this.state.showConfig && <this.renderConfigInput/>}
+            </div>
+            {inputFileds}
             {!this.constant && this.renderRadioBox()}
             <button onClick={()=>this.doOperation()} >{name}</button>
             </div>
@@ -249,10 +294,26 @@ export class AbiMethods extends Component {
         )
     }
 
+    renderConfigInput(){
+        return (
+            <>
+            <div>
+                 <label className="myinput-label">Enter nonce</label>
+                <input className="myinput" onChange={(e)=>this.setState({config_nonce:e.target.value})} name="config_nonce"/>
+            </div><br/>
+            <div>
+             <label className="myinput-label">Enter gasPrice</label>
+            <input className="myinput" onChange={(e)=>this.setState({config_gasPrice:e.target.value})} name="config_gasPrice"/>
+            </div>
+       </>
+        )
+    }
+
     render() {
         console.log(this.state)
         return (
             <div className="mygrid">
+                {this.state.isError && <Notification isError={this.state.isError} close={this.closeNotification.bind(this)} msg={this.state.errorMsg} />  }
                 <div className="grid-item">
                 <div className="selectBox">
                 <label>Choose function</label>
@@ -261,6 +322,7 @@ export class AbiMethods extends Component {
                             {this.renderMethodName()}
                         </select>
                 </div>
+                
                 <div className="inputBox">
                         {!!this.state.methodfieldObject && this.renderInputFields()}
                 </div>
@@ -270,11 +332,17 @@ export class AbiMethods extends Component {
                     <div className="mynavbar">
                     <img src="/public/img/dcex.png"/>
                     </div>
-                    <div className={`output ${this.state.outputClass} `}>
+                    <div className={`output`}>
                         
-                        <div>
-                        {this.state.res}
-                        </div>
+                        <code>
+                        {
+                        typeof this.state.res === 'object'
+                        ? Object.keys(this.state.res).map((v,k)=>{
+                        <p key={k}>{v}</p>
+                        })
+                        :this.state.res.toString()
+                        }
+                        </code>
                     </div>
                    
                 </div>

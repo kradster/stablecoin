@@ -9,6 +9,10 @@ var config = {
    entry: {
      index: ['babel-polyfill', './client/main.js']
    },
+   watchOptions: {
+      poll: true,
+      ignored: /node_modules/
+    },
    output: {
    		path: path.resolve(__dirname, 'build'),
    		filename: 'index.js',

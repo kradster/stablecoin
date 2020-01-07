@@ -2307,24 +2307,24 @@ input:focus {
 }
 
 .inputFieldBox button{
-  border:0px;
-  outline:0px;
-  background:rgba(74, 156, 238, 0.781);
-  box-shadow:0px 0px 0px 2px rgb(47, 45, 143) ;
-  color:rgb(47, 45, 143);
-  border-radius:5px;
-  cursor: pointer;
-  height:40px;
-  font-size:0.8rem;
-  font-weight: bold;
-  text-transform: capitalize;
-  transition: all .3s linear;
+  border: 0px;
+    outline: 0px;
+    background: rgb(252, 253, 255);
+    box-shadow: 0px 0px 0px 2px rgb(51, 90, 148);
+    color: rgb(47, 45, 143);
+    border-radius: 5px;
+    cursor: pointer;
+    height: 40px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: capitalize;
+    transition: all .3s linear;
 
 }
 .inputFieldBox button:hover,
   .inputFieldBox button:active{
-  background:linear-gradient(95deg,dodgerblue,rgb(26, 25, 129));
-  color:white;
+  background:#335a94;
+  color: #ffffff;
   box-shadow:0px 0px 0px 2px transparent;
 }
 
@@ -2380,3 +2380,118 @@ input.myinput.error-input{
   margin-top:-60px;
 }
 
+.notification-box{
+  position:fixed;
+  width:100%;
+  display: flex;
+  pointer-events: none;
+}
+.notification{
+  pointer-events: all;
+  background-color: red;
+  padding: 10px;
+  max-width:600px;
+  min-width:300px;
+  float: right;
+  box-shadow: 0px 9px 12px 2px #00000030;
+  margin: 20px auto; 
+  height: fit-content;
+  border-radius: 5px;
+}
+.notification-msg{
+  color: wheat;
+  word-break:break-all;
+  padding-right: 20px;
+ 
+  
+}
+.notification-close{
+  color: white;
+  float: right;
+  cursor: pointer;
+}
+
+.notificationIn{
+  animation:notificationIn 1s cubic-bezier(0.52, 0.03, 0.45, 0.94) 1 normal forwards;
+
+}
+.notificationOut{
+  animation:notificationOut .1s cubic-bezier(0.52, 0.03, 0.45, 0.94) 1 normal forwards;
+
+}
+
+@keyframes notificationIn{
+  from{opacity:0;margin-top:50px;}
+  to{opacity:1;margin-top:20px;}
+
+}
+
+@keyframes notificationOut{
+  from{opacity:1;margin-top:20px;}
+  to{opacity:0;margin-top:0px;}
+
+}
+
+.help{
+    background-color: #ffffff;
+    color: #335a94;
+    padding: 5px 8px;
+    font-size: 13px;
+    border-radius: 100%;
+    margin-left: 20px;
+    box-shadow: 0px 0px 1px 1px #335a94;
+    transition:all .3s ease-in-out;
+    position: relative;
+}
+
+.help:hover{
+  background-color: #335a94;
+  color: #ffffff
+  
+}
+
+.help::after{
+  content: attr(data-desc);
+  display: block;
+    position: absolute;
+    background: #335a94;
+    color: aliceblue;
+    padding: 10px;
+    width: 300px;
+    margin-top: 35px;
+    left: 0px;
+    box-shadow: 0px 9px 12px 2px #00000030;
+    pointer-events: none;
+    opacity: 0;
+    transition:all .3s linear;
+}
+.help::before{
+  content: "";
+  display: block;
+    position: absolute;
+    color: aliceblue;
+    width:1px;
+    height:1px;
+    left: 5px;
+    margin-top:15px;
+    border:10px solid transparent;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: #335a94;
+    pointer-events: none;
+    opacity: 0;
+    transition:all .3s linear;
+
+
+}
+
+.help:hover::after{
+  opacity: 1;
+  margin-top:25px;
+
+}
+.help:hover::before{
+  opacity: 1;
+  margin-top:5px;
+}
