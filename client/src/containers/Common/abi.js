@@ -12,6 +12,7 @@ export const abi = [
 			}
 		],
 		"name": "approve",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "success",
@@ -31,6 +32,7 @@ export const abi = [
 			}
 		],
 		"name": "blacklist",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -50,6 +52,7 @@ export const abi = [
 			}
 		],
 		"name": "burn",
+		"user":"Minter",
 		"outputs": [
 			{
 				"name": "success",
@@ -73,6 +76,7 @@ export const abi = [
 			}
 		],
 		"name": "configureMinter",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -96,6 +100,7 @@ export const abi = [
 			}
 		],
 		"name": "mint",
+		"user":"Minter",
 		"outputs": [
 			{
 				"name": "success",
@@ -110,6 +115,7 @@ export const abi = [
 		"constant": false,
 		"inputs": [],
 		"name": "pause",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -129,6 +135,7 @@ export const abi = [
 			}
 		],
 		"name": "removeMinter",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -152,6 +159,7 @@ export const abi = [
 			}
 		],
 		"name": "transfer",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "success",
@@ -179,6 +187,7 @@ export const abi = [
 			}
 		],
 		"name": "transferFrom",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "success",
@@ -198,6 +207,7 @@ export const abi = [
 			}
 		],
 		"name": "transferOwnership",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -217,6 +227,7 @@ export const abi = [
 			}
 		],
 		"name": "unBlacklist",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -231,6 +242,7 @@ export const abi = [
 		"constant": false,
 		"inputs": [],
 		"name": "unpause",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -250,6 +262,7 @@ export const abi = [
 			}
 		],
 		"name": "updateBlacklister",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -269,6 +282,7 @@ export const abi = [
 			}
 		],
 		"name": "updateMasterMinter",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -288,6 +302,7 @@ export const abi = [
 			}
 		],
 		"name": "updatePauser",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -311,6 +326,7 @@ export const abi = [
 			}
 		],
 		"name": "allowance",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "remaining",
@@ -330,6 +346,7 @@ export const abi = [
 			}
 		],
 		"name": "balanceOf",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "balance",
@@ -344,6 +361,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "blacklister",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "blacklister",
@@ -358,6 +376,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "decimals",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "",
@@ -377,6 +396,7 @@ export const abi = [
 			}
 		],
 		"name": "isBlacklisted",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "isBlacklisted",
@@ -396,6 +416,7 @@ export const abi = [
 			}
 		],
 		"name": "isMinter",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "isMinter",
@@ -415,6 +436,7 @@ export const abi = [
 			}
 		],
 		"name": "minterAllowance",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "allowance",
@@ -429,6 +451,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "name",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "",
@@ -443,6 +466,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "owner",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "owner",
@@ -457,6 +481,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "paused",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "success",
@@ -471,6 +496,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "pauser",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "pauser",
@@ -485,6 +511,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "stableCoinImpl",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "",
@@ -499,6 +526,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "symbol",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "",
@@ -513,6 +541,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "totalBurned",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "value",
@@ -527,6 +556,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "totalMinted",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "value",
@@ -541,6 +571,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "totalSupply",
+		"user":"User",
 		"outputs": [
 			{
 				"name": "",

@@ -23,7 +23,8 @@ export class AbiMethods extends Component {
             errorMsg:'',
             showConfig:false,
             config_nonce:"",
-            config_gasPrice:""
+            config_gasPrice:"",
+            userType:""
         };
 
         this.web3 = web3;
@@ -33,6 +34,7 @@ export class AbiMethods extends Component {
         this.getSignTransection = this.getSignTransection.bind(this);
         this.signAndBroadCast = this.signAndBroadCast.bind(this);
         this.doOperation = this.doOperation.bind(this);
+        this.setUserType = this.setUserType.bind(this);
         this.param = [];
         this.address = '0x02009a21Df9b9647aA6f02f72830318fADF1D281';
         this.abi = require('./abi.json');
@@ -59,15 +61,15 @@ export class AbiMethods extends Component {
         } 
     }
 
-    componentDidMount(){
-        let name = abi.map((e)=>{return e.name;});
-        console.log(name);
+    // componentDidMount(){
+    //     let name = abi.map((e)=>{return e.name;});
+    //     console.log(name);
         
-        this.setState({methodNames:name});
-    }  
+    //     this.setState({methodNames:name});
+    // }  
 
     renderMethodName(){
-       
+    //    let methodNames = abi.filter(m=>{return m.user===this.state.userType}).map(n=>{return n.name});
         return this.state.methodNames.length?this.state.methodNames.map(o=>(
         <option value={o} >{o}</option>
         )):'';
@@ -309,6 +311,20 @@ export class AbiMethods extends Component {
         )
     }
 
+    setUserType(e){
+        this.element = [];
+        this.constant ={};
+        let methodNames = abi.filter(m=>{return m.user===e.target.value}).map(n=>{return n.name});
+        this.setState({
+            userType:e.target.value,
+            methodNames:methodNames,
+            paramLength:0,
+            selectedMethodName:undefined,
+            methodfieldObject:undefined
+        });
+    }
+
+
     render() {
         console.log(this.state)
         return (
@@ -316,12 +332,25 @@ export class AbiMethods extends Component {
                 {this.state.isError && <Notification isError={this.state.isError} close={this.closeNotification.bind(this)} msg={this.state.errorMsg} />  }
                 <div className="grid-item">
                 <div className="selectBox">
-                <label>Choose function</label>
-                        <select onChange={(e)=>this.showMethodInput(e)}>
-                            <option selected disabled>Choose function</option>
-                            {this.renderMethodName()}
+                <label>Choose User Type</label>
+                        <select onChange={(e)=>this.setUserType(e)}>
+                            <option selected disabled>Choose User type</option>
+                            <option value="User">User</option>
+                            <option value="Minter">Minter</option>
+                            <option value="Admin">Admin</option>
                         </select>
                 </div>
+                {
+                    this.state.userType!=="" && (
+                            <div className="selectBox">
+                            <label>Choose function</label>
+                                    <select onChange={(e)=>this.showMethodInput(e)}>
+                                        <option selected disabled>Choose function</option>
+                                        {this.renderMethodName()}
+                                    </select>
+                            </div>
+                    )
+                }
                 
                 <div className="inputBox">
                         {!!this.state.methodfieldObject && this.renderInputFields()}
