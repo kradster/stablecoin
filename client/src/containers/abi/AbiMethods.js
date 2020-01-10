@@ -36,6 +36,7 @@ export class AbiMethods extends Component {
         this.doOperation = this.doOperation.bind(this);
         this.setUserType = this.setUserType.bind(this);
         this.param = [];
+        this.paramwithkey = [];
         this.address = '0x02009a21Df9b9647aA6f02f72830318fADF1D281';
         this.abi = require('./abi.json');
         this.contract = new this.web3.eth.Contract(this.abi,this.address);
@@ -186,6 +187,7 @@ export class AbiMethods extends Component {
 
     setParam = (e)=>{
         event.target.classList.remove('error-input');
+        this.paramwithkey[event.target.name] = {key:e.target.dataset.input,value:event.target.value}
         this.param[e.target.name] = e.target.value;
         // let arr = this.param.slice(0,this.state.paramLength);
         this.setState({'param':this.param,errorMsg:'',});
@@ -212,7 +214,19 @@ export class AbiMethods extends Component {
         )
     }
 
-    doOperation = ()=>{
+    doOperation = async ()=>{
+        let d  = await this.contract.methods.decimals().call();
+        let dec = Math.pow(10,d);
+        this.paramwithkey.forEach(pk=>{
+            pk.value = pk.key==="_amount" || pk.key==="_value"?(parseFloat(pk.value)*dec):pk.value;
+        })
+        this.param = this.paramwithkey.map(p=>{return p.value});
+        console.log('PARM',this.param);
+
+        
+
+
+
         this.setState({res:'Performing '+this.state.selectedMethodName+"".toUpperCase()});
         if(!this.constant){
 
@@ -257,8 +271,7 @@ export class AbiMethods extends Component {
         }else{
             this.signAndBroadCast();
         }
-
-
+     
     }
 
     closeNotification = ()=>{
@@ -274,7 +287,7 @@ export class AbiMethods extends Component {
         let inputFileds = inputs.map((i,index)=>(
             <div>
                  <label className="myinput-label">Enter {i.name.replace("_","")}</label>
-                <input className="myinput" onChange={(e)=>this.setParam(e)} name={index}/>
+                <input className="myinput" data-input={i.name} onChange={(e)=>this.setParam(e)} name={index}/>
             </div>))
         return (
             <div>
