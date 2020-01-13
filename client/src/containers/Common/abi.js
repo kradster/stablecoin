@@ -361,7 +361,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "blacklister",
-		"user":"User",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "blacklister",
@@ -396,7 +396,7 @@ export const abi = [
 			}
 		],
 		"name": "isBlacklisted",
-		"user":"User",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "isBlacklisted",
@@ -436,7 +436,7 @@ export const abi = [
 			}
 		],
 		"name": "minterAllowance",
-		"user":"User",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "allowance",
@@ -466,7 +466,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "owner",
-		"user":"User",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "owner",
@@ -481,7 +481,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "paused",
-		"user":"User",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "success",
@@ -496,7 +496,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "pauser",
-		"user":"User",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "pauser",
@@ -511,7 +511,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "stableCoinImpl",
-		"user":"User",
+		"user":"Admin",
 		"outputs": [
 			{
 				"name": "",
@@ -541,7 +541,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "totalBurned",
-		"user":"User",
+		"user":"Minter",
 		"outputs": [
 			{
 				"name": "value",
@@ -556,7 +556,7 @@ export const abi = [
 		"constant": true,
 		"inputs": [],
 		"name": "totalMinted",
-		"user":"User",
+		"user":"Minter",
 		"outputs": [
 			{
 				"name": "value",
