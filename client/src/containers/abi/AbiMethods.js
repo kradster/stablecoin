@@ -434,8 +434,9 @@ export class AbiMethods extends Component {
                 </div>
 
                 <div className="grid-item">
-                    <div className="mynavbar">
+                    <div className="mynavbar" style={{ display: "flex", alignItems: "center", padding: "55px 0px 0px" }}>
                         <img src="/public/img/dcex.png" />
+                        <img src="/public/img/coin.png" width="50" height="50" />
                     </div>
                     <div className={`output`}>
 
