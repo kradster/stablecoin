@@ -39,8 +39,8 @@ export class AbiMethods extends Component {
         this.param = [];
         this.paramwithkey = [];
         // this.address = '~'; /**0 decimals**/
-        // this.address = "0xe4dc5aabb6d9d590ae0dda59215f2fdf4609d9a9" /**2 decimals **/
-        this.address = "0xbb3b83ceb13ec61c07e0783496922c6455b168e7"
+        this.address = "0xe4dc5aabb6d9d590ae0dda59215f2fdf4609d9a9" /**2 decimals **/
+        // this.address = "0xbb3b83ceb13ec61c07e0783496922c6455b168e7"
         // this.address = "0xffb1b23293eef8ffdaf26c1964d4a8a7b86eecab"
         this.abi = require('./abi.json');
         this.contract = new this.web3.eth.Contract(this.abi, this.address);
@@ -435,8 +435,7 @@ export class AbiMethods extends Component {
 
                 <div className="grid-item">
                     <div className="mynavbar" style={{ display: "flex", alignItems: "center", padding: "55px 0px 0px" }}>
-                        <img src="/public/img/dcex.png" />
-                        <img src="/public/img/coin.png" width="50" height="50" />
+                        <img style={{width:"200px"}} src="/public/img/buyucoin-full-logo-white.svg" />
                     </div>
                     <div className={`output`}>
 
